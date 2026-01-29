@@ -45,4 +45,63 @@ for col in ["age", "study_hours_per_day", "grades_before_ai", "grades_after_ai",
         df[col]=pd.to_numeric(df[col], errors='coerce')
 
 
-print(df["age"].value_counts())
+#print(df["purpose_of_ai"].value_counts())
+
+##Feature Engineering
+
+#Grade Improvement with AI use (percent)
+df["improvement"] = (((df["grades_after_ai"] - df["grades_before_ai"])/df["grades_before_ai"])*100)
+#print(df.head())
+
+##Correlation Analysis
+correlation_matrix = df.corr(numeric_only=True)
+plt.figure(figsize = (10,10))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt='.2f')
+plt.title("Feature Correlation Heatmap", fontsize=16, fontweight='bold', pad=14)
+plt.tight_layout()
+plt.show()
+
+## Visualizations
+plt.figure(figsize = (12,4), dpi=120)
+
+# Scatter - study hours vs improvement
+sns.regplot(
+    x="study_hours_per_day", y="improvement", data=df,
+    scatter_kws={
+        "color": "red",
+        "alpha": 0.4,
+        "s":35
+    }
+)
+plt.show()
+
+# Scatter - study hours vs improvement (Homework Only)
+homework_df = df[df["purpose_of_ai"]=="Homework"]
+
+plt.figure(figsize = (12,4), dpi=120)
+plt.scatter(homework_df["study_hours_per_day"], homework_df["improvement"], color="blue")
+plt.xlabel("Study Hours Per Day")
+plt.ylabel("Improvement")
+plt.title("Homework")
+plt.show()
+
+# Scatter - study hours vs improvement (Research Only)
+research_df = df[df["purpose_of_ai"]=="Research"]
+
+plt.figure(figsize = (12,4), dpi=120)
+plt.scatter(research_df["study_hours_per_day"], research_df["improvement"], color="blue")
+plt.xlabel("Study Hours Per Day")
+plt.ylabel("Improvement")
+plt.title("Research")
+plt.show()
+
+#Bar plot - Age vs Study hours per day
+plt.figure(figsize=[14, 8])
+sns.barplot(x="age", y="study_hours_per_day", data=df,)
+plt.xlabel('Age')
+plt.ylabel('Study hours per day')
+plt.title('Age vs Study hours per day')
+plt.xticks(rotation=0, ha='right')
+plt.tight_layout()
+plt.show()
+
