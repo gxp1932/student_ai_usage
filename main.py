@@ -62,46 +62,47 @@ plt.tight_layout()
 plt.show()
 
 ## Visualizations
-plt.figure(figsize = (12,4), dpi=120)
 
-# Scatter - study hours vs improvement
-sns.regplot(
-    x="study_hours_per_day", y="improvement", data=df,
-    scatter_kws={
-        "color": "red",
-        "alpha": 0.4,
-        "s":35
-    }
-)
-plt.show()
-
-# Scatter - study hours vs improvement (Homework Only)
-homework_df = df[df["purpose_of_ai"]=="Homework"]
+# Scatter - ai vs no ai
+yes_uses_ai_df = df[df["uses_ai"]=="Yes"]
+no_uses_ai_df = df[df["uses_ai"]=="No"]
 
 plt.figure(figsize = (12,4), dpi=120)
-plt.scatter(homework_df["study_hours_per_day"], homework_df["improvement"], color="blue")
+plt.scatter(yes_uses_ai_df["study_hours_per_day"], yes_uses_ai_df["improvement"], color="blue")
+plt.scatter(no_uses_ai_df["study_hours_per_day"], no_uses_ai_df["improvement"], color="red")
 plt.xlabel("Study Hours Per Day")
 plt.ylabel("Improvement")
-plt.title("Homework")
+plt.title("Uses AI (Blue) vs No AI (Red)")
 plt.show()
 
-# Scatter - study hours vs improvement (Research Only)
-research_df = df[df["purpose_of_ai"]=="Research"]
+# Bar Plot - Average improvement per AI tool
+avg_improvement_tool = df.groupby("ai_tools_used")["improvement"].mean()
 
-plt.figure(figsize = (12,4), dpi=120)
-plt.scatter(research_df["study_hours_per_day"], research_df["improvement"], color="blue")
-plt.xlabel("Study Hours Per Day")
-plt.ylabel("Improvement")
-plt.title("Research")
+plt.figure(figsize=(10,5), dpi=120)
+avg_improvement_tool.plot(kind="bar", color=["blue","red","green"])
+
+plt.xlabel("AI Tool Used")
+plt.ylabel("Average Grade Improvement")
+plt.title("Average Grade Improvement by AI Tool")
+plt.xticks(rotation=0)
+plt.grid(axis="y", linestyle="--", alpha=0.5)
 plt.show()
 
-#Bar plot - Age vs Study hours per day
-plt.figure(figsize=[14, 8])
-sns.barplot(x="age", y="study_hours_per_day", data=df,)
-plt.xlabel('Age')
-plt.ylabel('Study hours per day')
-plt.title('Age vs Study hours per day')
-plt.xticks(rotation=0, ha='right')
-plt.tight_layout()
+# Bar Plot - Average improvement per Purpose
+avg_improvement_purpose = df.groupby("purpose_of_ai")["improvement"].mean()
+
+plt.figure(figsize=(10,5), dpi=120)
+avg_improvement_purpose.plot(kind="bar", color=["blue","red","green"])
+
+plt.xlabel("Purpose of AI Tool")
+plt.ylabel("Average Grade Improvement")
+plt.title("Average Grade Improvement per Purpose")
+plt.xticks(rotation=0)
+plt.grid(axis="y", linestyle="--", alpha=0.5)
 plt.show()
 
+# Conclusion
+print("\nConclusion:")
+print("\n - Students who use AI tools to study see a grade improvement compared to students who do not use AI to study.")
+print("\n - Students who used Gemini had a higher grade improvement compared to Copilot or ChatGPT.")
+print("\n - Students who used AI for research purposes have a slightly higher grade improvement compared to students who use AI for Coding or Homework.")
